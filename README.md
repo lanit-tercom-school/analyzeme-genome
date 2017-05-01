@@ -9,6 +9,10 @@ vcf-файлы можно взять здесь http://www.internationalgenome.o
 
 Замечание: так как данные из 1000 Genomes анонимны, то все фенотипические данные для тестов, которые можно оттуда получить -- место сбора (трехбуквенный код в названии файла). Их мы и используем. Потому надо следить, чтобы vcf-файлы назывались по такому же шаблону, как и в примерах выше или же имели только фенотип в названии ("фенотип.vcf").
 
+## Сборка
+В корне проекта выполнить следующую команду:
+`sbt package`
+
 ## Схема работы
 .vcf-файл (1)-> .tsv-файлы в количестве числа индивидов (2)-> Cassandra DB (3)-> Apache Spark
 
@@ -20,6 +24,6 @@ vcf-файлы можно взять здесь http://www.internationalgenome.o
 Запускать командой `java -jar vcflatten-assembly-0.7.0.jar /path/to/your/vcf --no-header --pattern "%s.%p"`.
 Впоследствии может быть заменен другим инструментом / переписан самостоятельно / оставлен как есть(работает же!).
 
-Шаг (2) -- перекладывание .tsv-файлов в Cassandra, для более быстрого и удобного доступа и хранения. Каждый .tsv может обрабатываться отдельно, поэтому можно это делать на Spark параллельно. Сейчас реализован в виде TSVImport.scala. Его нужно собрать в jar и запускать на Spark так: `Your_spark_dir/bin/spark-submit --packages datastax:spark-cassandra-connector:2.0.1-s_2.11 --class "TSVImport" --master local /path/to/built/tsvimport/jar/file /path/to/tsv/file`
+Шаг (2) -- перекладывание .tsv-файлов в Cassandra, для более быстрого и удобного доступа и хранения. Каждый .tsv может обрабатываться отдельно, поэтому можно это делать на Spark параллельно. Сейчас реализован в виде TSVImport.scala. Его запускать на Spark так: `Your_spark_dir/bin/spark-submit --packages datastax:spark-cassandra-connector:2.0.1-s_2.11 --class "TSVImport" --master local /path/to/built/tsvimport/jar/file /path/to/tsv/file`
 
 Шаг (3) представляет из себя вычисление на Spark различных статистик над данными, которые уже лежат в Cassandra, и размещение результатов в ней же. To be developed.
