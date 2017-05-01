@@ -9,6 +9,15 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.8"
 )
 
+
+lazy val root = (project in file("."))
+  .aggregate(TSVImport, chiSquareCategorical)
+  .settings(
+    commonSettings,
+    publishArtifact := false,
+    libraryDependencies ++= dependencies
+  )
+
 lazy val TSVImport = (project in file("TSVImport"))
   .settings(
     commonSettings,
