@@ -20,10 +20,12 @@ vcf-файлы можно взять здесь http://www.internationalgenome.o
 - Java 7 (!)
 - в plugins.sbt добавить `resolvers += Resolver.url("bintray-sbt-plugins", url("http://dl.bintray.com/sbt/sbt-plugin-releases"))(Resolver.ivyStylePatterns)`
 - там же `addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.9.2")`
-- после этого выполнить команды, как у них написано в readme: `sbt`, `project vcflatten`, `dist` -- это сгенерит архив с jar-файлом.
-Запускать командой `java -jar vcflatten-assembly-0.7.0.jar /path/to/your/vcf --no-header --pattern "%s.%p"`.
+- после этого выполнить команды, как у них написано в readme: `sbt`, `project vcflatten`, `dist` -- это сгенерит архив с jar-файлом.  
+
+Запускать командой `java -jar vcflatten-assembly-0.7.0.jar /path/to/your/vcf --no-header --pattern "%s.%p"`.  
 Впоследствии может быть заменен другим инструментом / переписан самостоятельно / оставлен как есть(работает же!).
 
-Шаг (2) -- перекладывание .tsv-файлов в Cassandra, для более быстрого и удобного доступа и хранения. Каждый .tsv может обрабатываться отдельно, поэтому можно это делать на Spark параллельно. Сейчас реализован в виде TSVImport.scala. Его запускать на Spark так: `Your_spark_dir/bin/spark-submit --packages datastax:spark-cassandra-connector:2.0.1-s_2.11 --class "TSVImport" --master local /path/to/built/tsvimport/jar/file /path/to/tsv/file`
+Шаг (2) -- перекладывание .tsv-файлов в Cassandra, для более быстрого и удобного доступа и хранения. Каждый .tsv может обрабатываться отдельно, поэтому можно это делать на Spark параллельно. Сейчас реализован в виде TSVImport.scala. Его запускать на Spark так:  
+`Your_spark_dir/bin/spark-submit --packages datastax:spark-cassandra-connector:2.0.1-s_2.11 --class "TSVImport" --master local /path/to/built/tsvimport/jar/file /path/to/tsv/file`
 
 Шаг (3) представляет из себя вычисление на Spark различных статистик над данными, которые уже лежат в Cassandra, и размещение результатов в ней же. To be developed.
