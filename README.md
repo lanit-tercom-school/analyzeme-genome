@@ -2,6 +2,23 @@
 
 ## Требования
 Нужно установить: Apache Spark, Apache Cassandra, scala, sbt, vcflatten(собрать вручную, см. далее).
+см. http://www.scala-sbt.org/
+```
+(using Homebrew on Mac)
+$ brew install scala
+$ brew install sbt
+```
+Проверить корректность установки можно командами
+```
+$ scala
+Welcome to Scala 2.12.2 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_121).
+Type in expressions for evaluation. Or try :help.
+
+scala>
+```
+```
+$ sbt
+```
 
 vcf-файлы можно взять здесь http://www.internationalgenome.org/data. Тестировались, например, эти два:
 - ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/pilot_data/release/2010_07/low_coverage/snps/CEU.low_coverage.2010_07.xchr.genotypes.vcf.gz
