@@ -12,11 +12,6 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file("."))
   .aggregate(TSVImport, chiSquareCategorical)
-  .settings(
-    commonSettings,
-    publishArtifact := false,
-    libraryDependencies ++= dependencies
-  )
 
 lazy val TSVImport = (project in file("TSVImport"))
   .settings(
