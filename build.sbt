@@ -24,5 +24,6 @@ lazy val chiSquareCategorical = (project in file("chiSquareCategorical"))
   .settings(
     commonSettings,
     name := "Chi-square Categorical",
-    libraryDependencies ++= dependencies
+    libraryDependencies ++= dependencies,
+    libraryDependencies += "org.apache.spark" % "spark-mllib_2.11" % "2.1.0"
   )
