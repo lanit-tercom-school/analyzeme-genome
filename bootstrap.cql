@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS input(
 	chrom text,
 	snp_pos int,
 	snp_value int,
-	PRIMARY KEY(ind, pheno, chrom, snp_pos)
-) WITH CLUSTERING ORDER BY (pheno ASC, chrom ASC, snp_pos ASC);
+	PRIMARY KEY(snp_pos, chrom, pheno, snp_value, ind)
+) WITH CLUSTERING ORDER BY (chrom ASC, pheno ASC, snp_value ASC, ind ASC);
 
 CREATE TABLE IF NOT EXISTS output(
 	test_type text,
