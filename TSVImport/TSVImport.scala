@@ -36,8 +36,8 @@ object TSVImport {
     val filtered = snpOnly.map(s => s(chromIndex) + "\t" +  s(snpPosIndex) + "\t" + s(snpValueIndex))
 
     // Adding individual id and phenotype extracted from input file name
-    // The file name is assumed as following: "$IND_$PHENO.tsv"
-    val inputInfo = args(0).replaceAll("./", "").replaceAll(".tsv", "")
+    // The file name is assumed to start with following: "$IND.$PHENO"
+    val inputInfo = args(0).split("/").last
     val ind = inputInfo.split("\\.")(0)
     val pheno = inputInfo.split("\\.")(1)
     val filteredWithIndAndPheno = filtered.map(s => s + "\t" + ind + "\t" + pheno)
