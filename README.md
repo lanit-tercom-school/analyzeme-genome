@@ -65,7 +65,7 @@ TBD
 - там же `addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.9.2")`
 - после этого выполнить команды, как у них написано в readme: `sbt`, `project vcflatten`, `dist` -- это сгенерит архив с jar-файлом.  
 
-Запускать командой `java -jar vcflatten-assembly-0.7.0.jar /path/to/your/vcf --no-header --pattern "%s.%p"`.  
+Запускать командой `java -jar vcflatten-assembly-0.7.0.jar /path/to/your/vcf --pattern "%s.%p"`.  
 Впоследствии может быть заменен другим инструментом / переписан самостоятельно / оставлен как есть(работает же!).
 
 Шаг (2) -- перекладывание .tsv-файлов в Cassandra, для более быстрого и удобного доступа и хранения. Каждый .tsv может обрабатываться отдельно, поэтому можно это делать на Spark параллельно. Сейчас реализован в виде TSVImport.scala. Его запускать на Spark так:  
