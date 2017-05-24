@@ -36,11 +36,12 @@ object ChiSquareCategorical {
 
     	// Counting three snp types for each phenotype to fill the table for chisq-test 
 	    var toTest = Array[Double]()
+	    val rowsToProcess = spark.sql(s"SELECT * FROM input_view WHERE snp_pos = $snp_pos AND chrom = '$chrom'").collect
 		for (item <- phenotypes){
 			val pheno = item.getString(0)
-			val snp0 = spark.sql(s"SELECT count(*) FROM input_view WHERE snp_pos = $snp_pos AND chrom = '$chrom' AND pheno = '$pheno' AND snp_value = 0").collect.head.getLong(0)
-			val snp12 = spark.sql(s"SELECT count(*) FROM input_view WHERE snp_pos = $snp_pos AND chrom = '$chrom' AND pheno = '$pheno' AND (snp_value = 1 OR snp_value = 2)").collect.head.getLong(0)
-			val snp3 = spark.sql(s"SELECT count(*) FROM input_view WHERE snp_pos = $snp_pos AND chrom = '$chrom' AND pheno = '$pheno' AND snp_value = 3").collect.head.getLong(0)
+			val snp0 = rowsToProcess.filter(row => row.get(2) == pheno && row.get(3) == 0).size
+			val snp12 = rowsToProcess.filter(row => row.get(2) == pheno && (row.get(3) == 1 || row.get(3) == 2)).size
+			val snp3 = rowsToProcess.filter(row => row.get(2) == pheno && row.get(3) == 3).size
 			toTest :+= snp0.toDouble
 			toTest :+= snp12.toDouble
 			toTest :+= snp3.toDouble
