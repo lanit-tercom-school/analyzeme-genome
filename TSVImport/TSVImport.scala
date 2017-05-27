@@ -48,10 +48,10 @@ object TSVImport {
     // 1/0 or 1|0 -> 2
     // 1/1 or 1|1 -> 3
     val complete = filteredWithIndAndPheno.
-    	map(s => s.replaceAll("0[/,|]0", "0")).
-    	map(s => s.replaceAll("0[/,|]1", "1")).
-    	map(s => s.replaceAll("1[/,|]0", "2")).
-    	map(s => s.replaceAll("1[/,|]1", "3"))
+        map(s => s.replaceAll("0[/,|]0", "0")).
+        map(s => s.replaceAll("0[/,|]1", "1")).
+        map(s => s.replaceAll("1[/,|]0", "2")).
+        map(s => s.replaceAll("1[/,|]1", "3"))
 
     val toSave = complete.map(s => s.split("\t")).collect{case Array (a,b,c,d,e) => Item(a, Integer.parseInt(b), Integer.parseInt(c), d, e)}
     toSave.saveToCassandra("genome", "input", SomeColumns("chrom", "snp_pos", "snp_value", "ind", "pheno"))

@@ -21,46 +21,46 @@ object ChiSquareCategorical {
     // Creating temporary view on input table to work with
     val spark = SparkSession.builder().getOrCreate()
     spark.sql(
-	    """CREATE TEMPORARY VIEW input_view
-	     USING org.apache.spark.sql.cassandra
-	     OPTIONS (
-	     table "input",
-	     keyspace "genome",
-	     cluster "Test Cluster",
-	     pushdown "true")"""
-		)
+        """CREATE TEMPORARY VIEW input_view
+         USING org.apache.spark.sql.cassandra
+         OPTIONS (
+         table "input",
+         keyspace "genome",
+         cluster "Test Cluster",
+         pushdown "true")"""
+        )
     // Getting a list of possible genotypes 
     val phenotypes = spark.sql("SELECT DISTINCT pheno FROM input_view").collect
 
     for (snp_pos <- snp_pos_first to snp_pos_last){
 
-    	// Counting three snp types for each phenotype to fill the table for chisq-test 
-	    var toTest = Array[Double]()
-	    val rowsToProcess = spark.sql(s"SELECT * FROM input_view WHERE snp_pos = $snp_pos AND chrom = '$chrom'").collect
-		for (item <- phenotypes){
-			val pheno = item.getString(0)
-			val snp0 = rowsToProcess.filter(row => row.get(2) == pheno && row.get(3) == 0).size
-			val snp12 = rowsToProcess.filter(row => row.get(2) == pheno && (row.get(3) == 1 || row.get(3) == 2)).size
-			val snp3 = rowsToProcess.filter(row => row.get(2) == pheno && row.get(3) == 3).size
-			toTest :+= snp0.toDouble
-			toTest :+= snp12.toDouble
-			toTest :+= snp3.toDouble
-		}
+        // Counting three snp types for each phenotype to fill the table for chisq-test 
+        var toTest = Array[Double]()
+        val rowsToProcess = spark.sql(s"SELECT * FROM input_view WHERE snp_pos = $snp_pos AND chrom = '$chrom'").collect
+        for (item <- phenotypes){
+            val pheno = item.getString(0)
+            val snp0 = rowsToProcess.filter(row => row.get(2) == pheno && row.get(3) == 0).size
+            val snp12 = rowsToProcess.filter(row => row.get(2) == pheno && (row.get(3) == 1 || row.get(3) == 2)).size
+            val snp3 = rowsToProcess.filter(row => row.get(2) == pheno && row.get(3) == 3).size
+            toTest :+= snp0.toDouble
+            toTest :+= snp12.toDouble
+            toTest :+= snp3.toDouble
+        }
 
-		// Runnning the chisq-test and saving results to output table
-		// Catching an exception for when some column or row in the table is all zeros (chisq-test can't be run in this case)
-		val matrix: Matrix = Matrices.dense(phenotypes.size, 3, toTest)
-		try {
-			val result = Statistics.chiSqTest(matrix)
-			val resultsMap = Map("pValue" -> result.pValue.toFloat, "statistic" -> result.statistic.toFloat, "degreesOfFreedom" -> result.degreesOfFreedom.toFloat)
-			val toSave = sc.parallelize(Seq(("chi_square_categorical", chrom, snp_pos, resultsMap)))
-			toSave.saveToCassandra("genome", "output", SomeColumns("test_type", "chrom", "snp_pos", "result"))
-			println(result)
-		} catch {
-			case e: IllegalArgumentException => println(e.getMessage)
-		}
+        // Runnning the chisq-test and saving results to output table
+        // Catching an exception for when some column or row in the table is all zeros (chisq-test can't be run in this case)
+        val matrix: Matrix = Matrices.dense(phenotypes.size, 3, toTest)
+        try {
+            val result = Statistics.chiSqTest(matrix)
+            val resultsMap = Map("pValue" -> result.pValue.toFloat, "statistic" -> result.statistic.toFloat, "degreesOfFreedom" -> result.degreesOfFreedom.toFloat)
+            val toSave = sc.parallelize(Seq(("chi_square_categorical", chrom, snp_pos, resultsMap)))
+            toSave.saveToCassandra("genome", "output", SomeColumns("test_type", "chrom", "snp_pos", "result"))
+            println(result)
+        } catch {
+            case e: IllegalArgumentException => println(e.getMessage)
+        }
 
-	}
+    }
 
     sc.stop()
   }
