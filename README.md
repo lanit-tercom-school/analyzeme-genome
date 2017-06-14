@@ -49,6 +49,11 @@ Connected to Test Cluster at 172.17.0.2:9042.
 Use HELP for help.
 ```
 
+```
+Альтернативным вариантом установки Cassandra может быть использованием Docker Store: 
+<https://store.docker.com/images/53ad54dd-9bd8-48cd-89b4-fc1d5fdfa6cc>
+```
+
 ### Запуск Spark
 TBD
 
